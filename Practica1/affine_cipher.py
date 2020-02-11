@@ -13,6 +13,12 @@ class Affine():
             B -- El coeficiente B de desplazamiento.
         """
         self.alphabet = alphabet
+        # Checamos que se haya pasado un parámetro A
+        if A:
+            self.A = A 
+        else: 
+            self.A = 1
+        # Checamos si A y la longitud del alfabeto son primos relativos.
         if prime_relative(len(alphabet), A):
             self.A = A
         else:
