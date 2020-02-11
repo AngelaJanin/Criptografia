@@ -1,3 +1,6 @@
+import random
+from utils import CryptographyException,prime_relative
+
 class Affine():
 
     def __init__(self, alphabet, A=None, B=None):
@@ -9,7 +12,12 @@ class Affine():
             A -- El coeficiente A que necesita el cifrado.
             B -- El coeficiente B de desplazamiento.
         """
-        pass
+        self.alphabet = alphabet
+        if prime_relative(len(alphabet), A):
+            self.A = A
+        else:
+            raise CryptographyException()
+        self.B = B
 
     def cipher(self, message):
         """
@@ -18,7 +26,14 @@ class Affine():
         Parámetro:
             message -- el mensaje a cifrar.
         """
-        pass
+        cifrado = ""
+        # Por cada letra que hay en el mensaje le aplicamos la fórmula (ax+b) mód n 
+        # y concatenamos la letra ya cifrada para regresar el texto cifrado o criptotexto.
+        for letra in message:
+            entero = ((self.A * self.alphabet.find(letra)) + self.B) % len(self.alphabet)
+            letra_cifrada = self.alphabet[entero]
+            cifrado = cifrado + letra_cifrada
+        return cifrado
 
     def decipher(self, criptotext):
         """
@@ -27,4 +42,26 @@ class Affine():
         Parámetro:
             criptotext -- el mensaje a descifrar.
         """
-        pass
+        # Encontramos el inverso del parámetro A
+        inverso = self.modInverse(self.A, len(self.alphabet))
+        texto_claro = ""
+        # Para cada letra del criptotexto calculamos su letra correspondiente siguiendo la 
+        # fórmula x = (a^-1 (y-b)) mód n 
+        for criptoLetra in criptotext:
+            num_letra = (inverso * (self.alphabet.find(criptoLetra) - self.B)) % len(self.alphabet)
+            letra_clara = self.alphabet[num_letra]
+            texto_claro = texto_claro + letra_clara
+        return texto_claro 
+
+
+    """
+    Función auxiliar que busca el inverso multiplicativo del 
+    parámetro A.
+    Sacado de: https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
+    """
+    def modInverse(self, a, m) : 
+        a = a % m; 
+        for x in range(1, m) : 
+            if ((a * x) % m == 1) : 
+                return x 
+        return 1
