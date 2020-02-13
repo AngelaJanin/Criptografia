@@ -14,14 +14,9 @@ class Affine():
         """
         self.alphabet = alphabet
         # Checamos que se haya pasado un parámetro A
-        auxiliar = A
-        if not auxiliar:
-            self.A = 1
-        else: 
-            self.A = A
-
+        A= A if A else self.encuentraPrimoRelativo(len(self.alphabet))
         # Checamos si A y la longitud del alfabeto son primos relativos.
-        if prime_relative(self.A,len(self.alphabet)):
+        if prime_relative(A,len(self.alphabet)):
             self.A = A
         else:
             raise CryptographyException()
@@ -73,3 +68,18 @@ class Affine():
             if ((a * x) % m == 1) : 
                 return x 
         return 1
+
+    """
+    Función auxiliar que encuentra un número primo relativo 
+    de acuerdo al número que le pasen.
+    """
+    def encuentraPrimoRelativo(self, n):
+        for i in range(2,n):
+            if prime_relative(i,n):
+                return i
+
+alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+message = "UNMENSAJEENESPAÑOL"
+a = Affine(alphabet)
+n = len(alphabet)
+print(prime_relative(n, a.A))
