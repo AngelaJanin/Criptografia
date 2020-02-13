@@ -14,12 +14,12 @@ class Affine():
         """
         self.alphabet = alphabet
         # Checamos que se haya pasado un parámetro A
-        if A:
-            self.A = A 
-        else: 
-            self.A = 1
+        auxiliar = A
+        if not auxiliar:
+            auxiliar = 1
+
         # Checamos si A y la longitud del alfabeto son primos relativos.
-        if prime_relative(A,len(self.alphabet)):
+        if prime_relative(auxiliar,len(self.alphabet)):
             self.A = A
         else:
             raise CryptographyException()
