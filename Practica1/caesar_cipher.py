@@ -27,7 +27,7 @@ class Caesar():
             if position < 0:
                 resultado += message[i]
             else:
-                positionEn = (position + self.key)%26
+                positionEn = (position + self.key)%len(self.alphabet)
                 resultado += self.alphabet[positionEn]
         return resultado        
 
@@ -56,7 +56,7 @@ class Caesar():
             if position < 0:
                 resultado += criptotext[i]
             else:
-                positionEn = (position - self.key)%26
+                positionEn = (position - self.key)%len(self.alphabet)
                 resultado += self.alphabet[positionEn]
         return resultado        
         pass
