@@ -22,11 +22,16 @@ class Caesar():
         resultado = ""
 
         for i in range (longitud):
-            actual += message[i]
-            local = self.alphabet.find(actual) 
-            if loc < 0:
+            actual = message[i]
+            position = self.alphabet.find(actual) 
+            if position < 0:
                 resultado += message[i]
-                
+            else:
+                positionEn = (position + self.key)%26
+                resultado += self.alphabet[positionEn]
+        return resultado        
+
+
         """
         Cifra el mensaje recibido como parámetro con el algoritmo de
         cifrado césar, un desplazamiento sobre el alfabeto predefinido.
@@ -43,4 +48,15 @@ class Caesar():
         Parámetro:
             cryptotext -- el mensaje a descifrar.
         """
+        longitud = len(criptotext)
+        resultado = ""
+        for i in range (longitud):
+            actual = criptotext[i]
+            position = self.alphabet.find(actual) 
+            if position < 0:
+                resultado += criptotext[i]
+            else:
+                positionEn = (position - self.key)%26
+                resultado += self.alphabet[positionEn]
+        return resultado        
         pass
