@@ -19,7 +19,7 @@ class Affine():
         else: 
             self.A = 1
         # Checamos si A y la longitud del alfabeto son primos relativos.
-        if prime_relative(len(alphabet), A):
+        if prime_relative(A,len(self.alphabet)):
             self.A = A
         else:
             raise CryptographyException()
