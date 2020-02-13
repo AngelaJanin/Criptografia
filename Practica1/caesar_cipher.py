@@ -1,3 +1,5 @@
+import random 
+
 class Caesar():
 
     def __init__(self, alphabet, key=None):
@@ -9,15 +11,29 @@ class Caesar():
             key -- el tamaño del desplazamiento sobre el alfabeto, si es
                    None, se debe de escoger una llave aleatoria, válida.
         """
+        self.alphabet = alphabet
+        self.key = key 
+        if self.key is None:
+            self.key = random.randint(0,26)
         pass
 
     def cipher(self, message, flag=None):
+        longitud = len(message)
+        resultado = ""
+
+        for i in range (longitud):
+            actual += message[i]
+            local = self.alphabet.find(actual) 
+            if loc < 0:
+                resultado += message[i]
+                
         """
         Cifra el mensaje recibido como parámetro con el algoritmo de
         cifrado césar, un desplazamiento sobre el alfabeto predefinido.
         Parámetro:
             message -- el mensaje a cifrar.
         """
+
         pass
 
     def decipher(self, criptotext, flag=None):
