@@ -9,14 +9,17 @@ class Ejercicio1:
             img = image.read()
             imagenByte = bytearray(img)   
         return imagenByte
-
-    imagenByte = imagen2Array()     
-    longitud = len(imagenByte)
-    alfabeto = len(list(range(0, 256)))
+    
+    alfabeto = len(list(range(0, 256)))    
 
     for intento in range(alfabeto):
+        imagenByte = imagen2Array()     
+        longitud = len(imagenByte)
+
+
         for i in range(longitud):
             imagenByte[i] = (imagenByte[i] + intento) % 256  
+        
         idImagen = "imagen" + str(intento) + ".jpg"
         f = open(idImagen, 'wb')
         f.write(imagenByte)

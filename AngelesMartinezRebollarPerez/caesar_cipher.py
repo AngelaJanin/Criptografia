@@ -20,17 +20,17 @@ class Caesar():
     def cipher(self, message, flag=None):
         longitud = len(message)
         resultado = ""
-
+        
         for i in range (longitud):
             actual = message[i]
             position = self.alphabet.find(actual) 
             if position < 0:
+                #if i in self.alphabet:
                 resultado += message[i]
             else:
                 positionEn = (position + self.key)%len(self.alphabet)
                 resultado += self.alphabet[positionEn]
-        return resultado        
-
+        return resultado
 
         """
         Cifra el mensaje recibido como parámetro con el algoritmo de
@@ -50,6 +50,7 @@ class Caesar():
         """
         longitud = len(criptotext)
         resultado = ""
+
         for i in range (longitud):
             actual = criptotext[i]
             position = self.alphabet.find(actual) 
