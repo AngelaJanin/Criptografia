@@ -22,6 +22,7 @@ class Hill():
         # Checamos si se nos pasa una llave y sino, la generamos
         self.key = key if key else self.construyeLllave()
         self.key = self.llenaMatriz(self.key, raiz, True)
+        print(self.key)
         # Si el determinante es 0, entonces no tiene matriz inversa y se levanta excepción
         if np.linalg.det(self.key) == 0 :
             raise CryptographyException()
@@ -37,6 +38,7 @@ class Hill():
         """
         message = message.replace(" ", "")
         raiz = self.encuentraRaiz(self.n)
+        # Dividimos el mensaje en bloques de longitud de la raíz
         bloques = [message[i:i+raiz] for i in range(0,len(message), raiz)]
         criptotexto = ""
         for b in bloques:
@@ -64,21 +66,43 @@ class Hill():
             return raiz
 
     """
-    Función auxiliar que regresa la matriz creada a partir de la llave 
+    Función auxiliar que regresa la matriz creada a partir de una llave 
     :param key: La llave para generar la matriz
     :param raiz: La raiz de la longitud de la llave
+    :param cuadrada: Bandera que indica si una matriz es cuadrada o no
     :return: la matriz generada a partir de la llave
     """
     def llenaMatriz(self, key, raiz, cuadrada):
-        print(cuadrada)
         c = 0
+        # Caso en que la matriz sea cuadrada
         if cuadrada:
             matriz = np.zeros(shape=(raiz,raiz))
-        else:
-            matriz = np.zeros(shape=(raiz, 1))
-        for renglon in range(raiz):
+            # Recorremos cada renglón y columna para llenarla de acuerdo 
+            # a la letra con el número que le corresponde
+            for renglon in range(raiz):
                 for columna in range(raiz):
                     matriz[renglon][columna] = self.alphabet.find(key[c])
+                    c += 1
+        # Caso en que la matriz no es cuadrada
+        else:
+            matriz = np.zeros(shape=(raiz,1))
+            # Checamos si hay espacios vacíos en el mensaje para la matriz
+            diferencia = raiz - len(key)
+            # Recorremos cada renglón y columna para llenarla de acuerdo
+            # a la letra con el número que le corresponde
+            for renglon in range(raiz):
+                for columna in range(1):
+                    # Checamos si ya llegamos al renglón vacío y si sí nos 
+                    # salimos porque inicializamos la matriz con ceros
+                    if diferencia != 0:
+                        if raiz - renglon  == diferencia: 
+                            break
+                        # Caso en el que hay diferencia pero aún no llegamos a un renglón vacío
+                        else: 
+                            matriz[renglon][columna] = self.alphabet.find(key[c])
+                    # Caso en el que el tamaño del mensaje es igual al número de renglones
+                    else :
+                        matriz[renglon][columna] = self.alphabet.find(key[c])
                     c += 1
         return matriz
 
