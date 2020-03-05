@@ -1,5 +1,6 @@
 import math, random, string
-import numpy as np
+from sympy import *
+from sympy import Matrix
 from utils import CryptographyException
 class Hill():
 
@@ -22,9 +23,8 @@ class Hill():
         # Checamos si se nos pasa una llave y sino, la generamos
         self.key = key if key else self.construyeLllave()
         self.key = self.llenaMatriz(self.key, raiz, True)
-        print(self.key)
         # Si el determinante es 0, entonces no tiene matriz inversa y se levanta excepción
-        if np.linalg.det(self.key) == 0 :
+        if self.key.det() == 0 :
             raise CryptographyException()
 
 
@@ -41,10 +41,15 @@ class Hill():
         # Dividimos el mensaje en bloques de longitud de la raíz
         bloques = [message[i:i+raiz] for i in range(0,len(message), raiz)]
         criptotexto = ""
+        # Recorremos cada bloque para cifrarlo de acuerdo al método de Hill
         for b in bloques:
-            m = self.llenaMatriz(b,raiz, False)
-            print(m)
-
+            matriz = self.llenaMatriz(b, raiz, False)
+            matriz = self.key * matriz
+            matriz = matriz % len(self.alphabet)
+            # Concatenamos todos los cifrados de los bloques
+            for i in range(raiz):
+                criptotexto += self.alphabet[matriz[i,0]]
+        return criptotexto
 
     def decipher(self, ciphered):
         """
@@ -53,6 +58,25 @@ class Hill():
         :param ciphered: El criptotexto de algún mensaje posible.
         :return: El texto plano correspondiente a manera de cadena.
         """
+        raiz = self.encuentraRaiz(self.n)
+        texto = ""
+        det = self.key.det()
+        inv_mul = self.modInverse(det, len(self.alphabet))
+        adj = self.key.adjugate()
+        # Dividimos el mensaje en bloques de longitud de la raíz
+        bloques = [ciphered[i:i+raiz] for i in range(0,len(ciphered), raiz)]
+        # Recorremos cada bloque para descifrarlo y crear su matriz correspondiente
+        for b in bloques:
+            matriz = self.llenaMatriz(b,raiz, False)
+            inversa = adj * inv_mul
+            inversa = inversa * matriz
+            inversa = inversa % len(self.alphabet)
+            # Concatenamos el descifrado de todos los bloques
+            for i in range(raiz):
+                texto += self.alphabet[inversa[i,0]]
+        return texto
+            
+        
     """
     Función auxiliar que regresa la raíz cuadrada
     :param n: La longitud de la llave
@@ -76,16 +100,16 @@ class Hill():
         c = 0
         # Caso en que la matriz sea cuadrada
         if cuadrada:
-            matriz = np.zeros(shape=(raiz,raiz))
+            matriz = zeros(raiz,raiz)
             # Recorremos cada renglón y columna para llenarla de acuerdo 
             # a la letra con el número que le corresponde
             for renglon in range(raiz):
                 for columna in range(raiz):
-                    matriz[renglon][columna] = self.alphabet.find(key[c])
+                    matriz[renglon, columna] = self.alphabet.find(key[c])
                     c += 1
         # Caso en que la matriz no es cuadrada
         else:
-            matriz = np.zeros(shape=(raiz,1))
+            matriz = zeros(raiz,1)
             # Checamos si hay espacios vacíos en el mensaje para la matriz
             diferencia = raiz - len(key)
             # Recorremos cada renglón y columna para llenarla de acuerdo
@@ -99,10 +123,10 @@ class Hill():
                             break
                         # Caso en el que hay diferencia pero aún no llegamos a un renglón vacío
                         else: 
-                            matriz[renglon][columna] = self.alphabet.find(key[c])
+                            matriz[renglon, columna] = self.alphabet.find(key[c])
                     # Caso en el que el tamaño del mensaje es igual al número de renglones
                     else :
-                        matriz[renglon][columna] = self.alphabet.find(key[c])
+                        matriz[renglon, columna] = self.alphabet.find(key[c])
                     c += 1
         return matriz
 
@@ -113,6 +137,16 @@ class Hill():
     def construyeLllave(self):
         return ''.join(random.choice(self.alphabet) for i in range(self.n))
 
-h = Hill("ABCDEFGHIJKLMNÑOPQRSTUVWXYZ", 4, "EBAY")
-h.cipher("UN MENSAJE CON Ñ")
+    """
+    Función auxiliar que busca el inverso multiplicativo del 
+    parámetro A.
+    Sacado de: https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
+    """
+    def modInverse(self, a, m) : 
+        a = a % m; 
+        for x in range(1, m) : 
+            if ((a * x) % m == 1) : 
+                return x 
+        return 1    
+
 
