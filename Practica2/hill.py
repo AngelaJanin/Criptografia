@@ -146,7 +146,7 @@ class Hill():
             m_llave = self.llenaMatriz(llave, raiz, True)
             det = m_llave.det()
             # Si el determinante es 0, entonces no tiene matriz inversa y se levanta excepción
-            if det != 0 and len(self.alphabet) % det != 0:
+            if det != 0 and len(self.alphabet) % det == 1:
                 valida = 1
         return llave
     """
