@@ -29,7 +29,7 @@ class Hill():
             raise CryptographyException()
         # Si la longitud del alfabeto % determinante de la llave es 0 se levanta la excepción
         elif len(self.alphabet) % self.key.det() == 0:
-            raise CryptographyException
+            raise CryptographyException()
 
 
     def cipher(self, message):
