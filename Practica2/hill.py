@@ -21,11 +21,15 @@ class Hill():
         if not (isinstance (raiz, int)):
             raise CryptographyException()
         # Checamos si se nos pasa una llave y sino, la generamos
-        self.key = key if key else self.construyeLllave()
+        self.key = key if key else self.construyeLllave(raiz)
         self.key = self.llenaMatriz(self.key, raiz, True)
+        #self.key = self.key % len(self.alphabet) 
         # Si el determinante es 0, entonces no tiene matriz inversa y se levanta excepción
         if self.key.det() == 0 :
             raise CryptographyException()
+        # Si la longitud del alfabeto % determinante de la llave es 0 se levanta la excepción
+        elif len(self.alphabet) % self.key.det() == 0:
+            raise CryptographyException
 
 
     def cipher(self, message):
@@ -68,7 +72,7 @@ class Hill():
         # Recorremos cada bloque para descifrarlo y crear su matriz correspondiente
         for b in bloques:
             matriz = self.llenaMatriz(b,raiz, False)
-            inversa = adj * inv_mul
+            inversa = inv_mul * adj
             inversa = inversa * matriz
             inversa = inversa % len(self.alphabet)
             # Concatenamos el descifrado de todos los bloques
@@ -134,9 +138,17 @@ class Hill():
     Función auxiliar que construye una llave en caso de que no se de una en el constructor
     :return: una llave aleatoria 
     """
-    def construyeLllave(self):
-        return ''.join(random.choice(self.alphabet) for i in range(self.n))
-
+    def construyeLllave(self, raiz):
+        llave = ""
+        valida = 0
+        while valida != 1 :
+            llave = ''.join(random.choice(self.alphabet) for i in range(self.n))
+            m_llave = self.llenaMatriz(llave, raiz, True)
+            det = m_llave.det()
+            # Si el determinante es 0, entonces no tiene matriz inversa y se levanta excepción
+            if det != 0 and len(self.alphabet) % det != 0:
+                valida = 1
+        return llave
     """
     Función auxiliar que busca el inverso multiplicativo del 
     parámetro A.
