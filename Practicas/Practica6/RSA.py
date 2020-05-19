@@ -17,21 +17,15 @@ class RSA():
         self.p = generate_prime(100)
         self.q = generate_prime(100)
         self.n = self.p * self.q
-        phi = self.__phi__()
+        self.phi = self.__phi__()
         # Calculamos el número e para la llave pública
-        e = randint(1 , phi)
-        while not(prime_relative(e,phi)):
-            e = randint(1 , phi)
+        e = self.get_prime_relative()
         # Asignamos la llave pública y privada
         self.pub_key = e
-        self.priv_key = mod_inverse(e,phi)
+        self.priv_key = mod_inverse(e,self.phi)
         # Creamo los archivos .pem
-        pub = open('pub_key.pem', 'w')
-        pub.write(str(self.n) + "," + str(self.pub_key))
-        pub.close()
-        priv = open('priv_key.pem','w')
-        priv.write(str(self.n) + "," + str(self.priv_key))
-        priv.close()
+        pub = self.write_file(self.pub_key, 'pub_key.pem')
+        priv = self.write_file(self.priv_key, 'priv_key.pem')
         self.padding_scheme = False
 
     def __phi__(self):
@@ -67,3 +61,17 @@ class RSA():
             m = pow(c, self.priv_key, self.n)
             mensaje += chr(m) 
         return mensaje 
+
+    def get_prime_relative(self):
+        while True:
+            k = randint(1, self.phi)
+            if prime_relative(k, self.phi):
+                break
+        return k   
+
+    def write_file(self, key, name):
+        pem = open(name, 'w')
+        pem.write(str(self.n) + "," + str(key))
+        pem.close()
+
+        
