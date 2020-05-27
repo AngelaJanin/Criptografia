@@ -21,7 +21,7 @@ class Curve():
         :return: true si el punto está en la curva, false en otro caso.
         """
         if point == None :
-        	return True
+            return True
         x, y = point[0], point[1]
         return pow(y,2) % self.p == ((pow(x,3) + (self.A * x) + self.B) % self.p)
 
@@ -44,24 +44,26 @@ def add_points(p, q, curve):
     :return: Una tupla que contiene el resultado de la suma o None en caso de
     que haya sido evaluada al punto infinito.
     """
-    # Caso en el que se tiene el mismo punto o un punto con la misma coordenada x
-    # O que su coordenada x sea igual y la coordenada y cumple con -y1 = y2
-    if (p == q) or ((p[0] == q[0]) and (-p[1] ==  q[1])):
-    	return None
-    # Caso en el que el punto q es es el punto al infinito
-    elif (q == None) and p != None:
-    	return p 
-    # Caso en el que el punto p es el punto al infinito
+    # Caso en el que el punto q es es el punto infinito
+    if (q == None) and p != None:
+        return p 
+    # Caso en el que el punto p es el punto infinito
     elif (p == None) and q != None:
-    	return q
+        return q
+    # Caso en el que ambos puntos reposen en la coordenada x 
+    elif (p == q) and (p[1] == q[1] == 0):
+        return None
+    # Caso en donde los puntos son el mismo pero reflejado
+    elif (p[0] == q[0]) and (-p[1] == q[1]):
+        return None
+    elif (p[0] == q[0]) and (p[1] != q[1]):
+        return None
     else:
-    	x1, x2, y1, y2 = p[0], q[0], p[1], p[1]
-    	if (x1 == x2):
-    		return None
-    	l = calculaLambda(p, q, curve)
-    	x = pow(l,2) - x1 - x2
-    	y = (l * (x1 - x)) - y1
-    	return(x,y)
+        x1, x2, y1, y2 = p[0], q[0], p[1], q[1]
+        l = calculaLambda(p, q, curve)
+        x = (pow(l,2) - x1 - x2) % curve.p
+        y = ((l * (x1 - x)) - y1) % curve.p
+        return(x,y)
 
 def scalar_multiplication(p, k, curve):
     """
@@ -74,7 +76,7 @@ def scalar_multiplication(p, k, curve):
     en algún momento al punto infinito.
     """
     if k == 1:
-    	return p
+        return p
     return add_points(p, scalar_multiplication(p,(k-1), curve),curve)
 
 """
@@ -85,7 +87,8 @@ utiliza para la suma de puntos.
 :param c: 
 """
 def calculaLambda(p, q, c):
-	x1, x2, y1, y2 = p[0], q[0], p[1], q[1]
-	if p == q :
-		return (3 * pow(x1,2) + c.A) * mod_inverse((2 * y1),c.p)
-	return (y1 - y2) * mod_inverse((x1 - x2), c.p)
+    x1, x2, y1, y2 = p[0], q[0], p[1], q[1]
+    if p == q :
+        return ((3 * pow(x1,2)) + c.A) * mod_inverse((2 * y1),c.p) 
+    return (y1 - y2) * mod_inverse((x1 - x2), c.p)
+

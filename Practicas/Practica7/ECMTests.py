@@ -18,8 +18,11 @@ def sieve(n):
     return primes
 
 def test_ecm():
-    assert lenstra(6) == (2, 3) or lenstra(6) == (3, 2)
-    assert lenstra(130063) == (113, 1151) or lenstra(1151, 113)
-    criba = sieve(10000)
-    p, q = criba[randint(0, len(criba))], criba[randint(0, len(criba))]
-    assert lenstra(p*q) == (p, q) or lenstra(p*q) == (q, p)
+	l = lenstra(6)
+	assert l == (2, 3) or l == (3, 2)
+	l = lenstra(130063)
+	assert l == (113, 1151) or l == (1151, 113)
+	criba = sieve(10000)
+	p, q = criba[randint(0, len(criba))], criba[randint(0, len(criba))]
+	l = lenstra(p*q)
+	assert l == (p, q) or l == (q, p)
